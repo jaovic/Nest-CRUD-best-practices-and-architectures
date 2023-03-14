@@ -1,0 +1,3980 @@
+openapi: 3.0.0
+info:
+  title: Documentação da API e-commerce da QESH
+  description: <h2>Bem vindo à documentação da api do e-commerce da QESH</h2> Este guia vai te ajudar a interagir com os end points desta api!
+  version: 1.0.0
+servers:
+  - url: https://ecommerce.pw1.develop.us-east-1.qesh.ai
+    description: Servidor de Homologação
+  - url: http://ecommerce.pw1.develop.us-east-1.qesh.ai
+    description: url de desenvolvimento
+  - url: ecommerce.pw1.develop.us-east-1.qesh.ai
+    description: url de desenvolvimento
+  - url: https://localhost:3001
+    description: url de desenvolvimento
+  - url: http://localhost:3001
+    description: url de desenvolvimento
+  - url: localhost:3001
+    description: url de desenvolvimento
+security:
+  - BearerAuth: []
+paths:
+  /v1/refresh-token:
+    post:
+      summary: 'conseguir um novo token de acesso'
+      description: "enviar o authorization header -> 'bearer refresh-token' <br> para ativar essa rota nesta documentação, clique em authorize ao lado da listagem de servesrs"
+      tags:
+        - AUTH
+      responses:
+        '200':
+          description: novo token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newToken:
+                    type: string
+                    example: 'new token'
+
+        '401':
+          description: 'msg: refresh token is required or refresh token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401-Unauthorized'
+  /v1/login-shop-owner:
+    post:
+      security: []
+      summary: Logar Usuário Lojista
+      description: 'Para logar um Lojista, enviar o body com email e senha para autorizacao. <br> tempo de expição: 60 minutos'
+      tags:
+        - AUTH
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_request_body'
+      responses:
+        '200':
+          description: Um Token de acesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: TOKEN DE ACESSO
+        '400':
+          description: Bad Request vai ser retornado quando alguma coisa no corpo da requisição veio errado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400-Response-Bad-Request'
+        '404':
+          description: Not Found será retornado quando as credenciais não forem encontradas no servid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: internal server error - pode acontecer por má formação na requisição
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/login-shopper:
+    post:
+      security: []
+      summary: Logar Usuário Comprador
+      description: 'Para logar um comprador, enviar o body com email e senha para autorizacao. <br> tempo de expição: 60 minutos'
+      tags:
+        - AUTH
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_request_body'
+      responses:
+        '200':
+          description: Um JSON  com as informações do banco
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: ey@#23948235sidufh349fg34fgjwenfg39ouivneijn23952u83jfidng
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: ac01751b-4821-4afd-4ad1-5959e58d73db
+                        bank_code:
+                          type: string
+                          example: '655'
+                        bank_branch:
+                          type: string
+                          example: '1111'
+                        bank_account:
+                          type: string
+                          example: '6180000000'
+                        active:
+                          type: boolean
+                  user:
+                    type: string
+                    example: 3dde7624-55ef-3401-5e9c-b0994cf423c
+        '400':
+          description: Bad Request vai ser retornado quando alguma coisa no corpo da requisição veio errado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400-Response-Bad-Request'
+
+  /v1/shop/:
+    post:
+      security: []
+      summary: Criar uma loja
+      tags:
+        - SHOP
+      description: "rota para criar uma loja<br> Observações:<br>a propriedade: <strong>days_store_operation</strong> é um array contendo os dias de funcionamento da loja, ons nomes são <ul><li>SUNDAY</li><li>MONDAY</li><li>TUESDAY</li><li>WEDNESDAY</li><li>THURSDAY</li><li>FRIDAY</li><li>SATURNDAY</li></ul> <br> A propriedade <strong>'address_owner'</strong> pode ser passado os seguintes valores: <br> <ul><li>SHOPPER</li><li>SHOP</li></ul><br> As propriedades: <strong>'document', 'email' e 'url'</strong> devem ser únicas<br> As urls de imagens <strong> img_web e img_mobile</strong> devem ser enviadas pela rota <strong>'/v1/shop/upload/icons'</strong> antes desta rota ser enviada"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  example: Mackie
+                document:
+                  type: string
+                  example: '0002401309001'
+                client_id:
+                  type: string
+                  example: 3cf47c5d-f064-4095-9b03-6f34d559fb4c
+                password:
+                  type: string
+                  example: '1234562789111'
+                name:
+                  type: string
+                  example: Makcie Store
+                email:
+                  type: string
+                  example: mackie@qesh.ai
+                phone:
+                  type: string
+                  example: '3199328321'
+                minimun_purchase:
+                  type: number
+                  example: 13
+                start_store_operation:
+                  type: string
+                  example: '312'
+                end_store_operation:
+                  type: string
+                  example: '313'
+                days_store_operation:
+                  type: array
+                  items:
+                    type: string
+                    example: MONDAY
+                show_address:
+                  type: boolean
+                  example: false
+                show_email:
+                  type: boolean
+                  example: false
+                is_closed:
+                  type: boolean
+                  example: false
+                primary_color:
+                  type: string
+                  example: '#2222'
+                secondary_color:
+                  type: string
+                  example: '#2222'
+                url:
+                  type: string
+                  example: https://mackie.com/
+                address:
+                  type: object
+                  properties:
+                    street:
+                      type: string
+                      example: rua sei lá
+                    number:
+                      type: string
+                      example: '684'
+                    neighborhood:
+                      type: string
+                      example: Bairro Tenso
+                    complementary_address:
+                      type: string
+                      example: fundos
+                    city:
+                      type: string
+                      example: Belo Horizonte
+                    state:
+                      type: string
+                      example: MG
+                    zip_code:
+                      type: string
+                      example: 31015-294
+                    address_owner:
+                      type: string
+                      example: SHOPPER
+                    is_active:
+                      type: boolean
+                      example: false
+                img_web:
+                  type: string
+                  example: https://th.bing.com/th/id/R.bcb381d440cc8c411cbe3cfed5aa4913?rik=mhE4uJNUt6EUyg&pid=ImgRaw&r=0
+                img_mobile:
+                  type: string
+                  example: https://th.bing.com/th/id/R.1dd190fc2369293cfbcc7295e06a96f2?rik=1hXHmg8hv9v6Gw&riu=http%3a%2f%2fwww.fcmusica.com%2fshop%2ffiles%2fMACKIE_LOGO.jpg&ehk=ng7Uq3s4NF%2fXMGxaOH8IuV1GgkA%2bbf2UTphXkcs9ueo%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: '78f394e0-f99d-4b3e-ba68-5d8f99eda7dd'
+                  client_id:
+                    type: string
+                    example: 'bf58d4b8-aceb-4845-9cbf-4e391b37f643'
+                  name:
+                    type: string
+                    example: 'Ms.'
+                  email:
+                    type: string
+                    example: 'Chad18@hotmail.com'
+                  phone:
+                    type: string
+                    example: '710-750-0371'
+                  minimun_purchase:
+                    type: number
+                    example: 53.32
+                  start_store_operation:
+                    type: string
+                    example: '312'
+                  end_store_operation:
+                    type: string
+                    example: '312'
+                  days_store_operation:
+                    type: array
+                    items:
+                      type: string
+                    example: ['WEDNESDAY', 'MONDAY']
+                  show_address:
+                    type: boolean
+                    example: false
+                  show_email:
+                    type: boolean
+                    example: false
+                  is_closed:
+                    type: boolean
+                    example: false
+                  primary_color:
+                    type: string
+                    example: '#2222'
+                  secondary_color:
+                    type: string
+                    example: '#2222'
+                  img_web:
+                    type: string
+                    example: 'https://develop-qesh1.s3.amazonaws.com/ecommerce/sales/2018-12-04%2021-02-00.173.jpg/1662996097933'
+                  img_mobile:
+                    type: string
+                    example: 'https://develop-qesh1.s3.amazonaws.com/ecommerce/sales/CQRSES-4.png/1662996097951'
+                  url:
+                    type: string
+                    example: 'https://deborah.name'
+                  user_owner_id:
+                    type: string
+                    example: '0dacd3ae-2be4-4c57-b4c8-c84c4239f51a'
+                  created_at:
+                    type: string
+                    example: '2022-11-25T16:19:45.894Z'
+                  updated_at:
+                    type: string
+                    example: '2022-11-25T16:19:45.894Z'
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 'f82f47d5-c373-46fc-9414-9e9a6c5b6268'
+                        shopper_id:
+                          type: string
+                          example: null
+                        shop_id:
+                          type: string
+                          example: '78f394e0-f99d-4b3e-ba68-5d8f99eda7dd'
+                        street:
+                          type: string
+                          example: 'tested'
+                        number:
+                          type: string
+                          example: 'Banana'
+                        neighborhood:
+                          type: string
+                          example: 'tested'
+                        complementary_address:
+                          type: string
+                          example: 'tested'
+                        city:
+                          type: string
+                          example: 'tested'
+                        state:
+                          type: string
+                          example: 'tested'
+                        zip_code:
+                          type: string
+                          example: 'tested'
+                        address_owner:
+                          type: string
+                          example: 'SHOPPER ou SHOP'
+                        is_active:
+                          type: boolean
+                          example: false
+                        created_at:
+                          type: string
+                          example: '2022-11-25T16:19:45.894Z'
+                        updated_at:
+                          type: string
+                          example: '2022-11-25T16:19:45.894Z'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop/{shop_id}/{address_id}:
+    patch:
+      summary: Atualizar uma loja
+      tags:
+        - SHOP
+      description: 'Rota para atualizar os dados de uma loja.<br> os campos: <br><strong>userName, document, client_id, password e email</strong> não podem ser alterados'
+      parameters:
+        - in: path
+          required: true
+          name: shop_id
+          schema:
+            type: string
+        - in: path
+          required: true
+          name: address_id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: kaique
+                phone:
+                  type: string
+                  example: '31993328321'
+                minimun_purchase:
+                  type: string
+                  example: '53.32'
+                start_store_operation:
+                  type: string
+                  example: '312'
+                end_store_operation:
+                  type: string
+                  example: '312'
+                days_store_operation:
+                  type: array
+                  items:
+                    type: string
+                    example: WEDNESDAY
+                show_address:
+                  type: boolean
+                  example: false
+                show_email:
+                  type: boolean
+                  example: true
+                is_closed:
+                  type: boolean
+                  example: false
+                primary_color:
+                  type: string
+                  example: '#2222'
+                secondary_color:
+                  type: string
+                  example: '#2222'
+                url:
+                  type: string
+                  example: www.djkaique.com.br
+                address:
+                  type: object
+                  properties:
+                    street:
+                      type: string
+                      example: rua sei lá
+                    number:
+                      type: string
+                      example: '684'
+                    neighborhood:
+                      type: string
+                      example: Bairro Cabuloso
+                    complementary_address:
+                      type: string
+                      example: frentes
+                    city:
+                      type: string
+                      example: Belo Horizonte
+                    state:
+                      type: string
+                      example: BA
+                    zip_code:
+                      type: string
+                      example: 31015-294
+                    address_owner:
+                      type: string
+                      example: SHOPPER
+                    is_active:
+                      type: boolean
+                      example: false
+                img_web:
+                  type: string
+                  example: https://th.bing.com/th/id/R.bcb381d440cc8c411cbe3cfed5aa4913?rik=mhE4uJNUt6EUyg&pid=ImgRaw&r=0
+                img_mobile:
+                  type: string
+                  example: https://th.bing.com/th/id/R.1dd190fc2369293cfbcc7295e06a96f2?rik=1hXHmg8hv9v6Gw&riu=http%3a%2f%2fwww.fcmusica.com%2fshop%2ffiles%2fMACKIE_LOGO.jpg&ehk=ng7Uq3s4NF%2fXMGxaOH8IuV1GgkA%2bbf2UTphXkcs9ueo%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Pedir um body real:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop/upload/icons:
+    post:
+      summary: Upload de Logos
+      tags:
+        - SHOP
+      description: rota para fazer upload das logos da loja. As imagens não podem ultrapassar 65335 KB. <br>As duas imagens são <strong>obrigatórias</strong><br> As imagens são os campos <strong>web e mobile</strong> em um campo do tipo multipart/form
+      requestBody:
+        required: true
+        content:
+          image/web:
+            schema:
+              type: string
+              format: binary
+          image/mobile:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  img_web:
+                    type: string
+                    example: https://clipground.com/images/mackie-logo-7.jpg
+                  img_mobile:
+                    type: string
+                    example: https://clipground.com/images/mackie-logo-7.jpg
+        '422':
+          description: se o tamanho for maior que o limite de 65335 KB
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/422-Response-Unprocessable_entity'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop/exists/{client_id}:
+    get:
+      tags:
+        - SHOP
+      parameters:
+        - in: path
+          required: true
+          name: client_id
+          description: client id para pesquisar
+          schema:
+            type: string
+            example: 'UUID client_id'
+      responses:
+        '200':
+          description: devolve o ID o email e a URL da loja
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client_id:
+                    type: string
+                    example: 'UUID'
+                  email:
+                    type: string
+                    example: 'shop email'
+                  url:
+                    type: string
+                    example: 'shop url'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop/find/{url}:
+    get:
+      summary: encontrar pela URL
+      description: Encontre uma loja através de sua URL
+      tags:
+        - SHOP
+      parameters:
+        - in: path
+          required: true
+          name: url
+          description: client id para pesquisar
+          schema:
+            type: string
+            example: 'URL para encontrar'
+      responses:
+        '200':
+          description: devolve o ID o email e a URL da loja
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example:
+                  client_id:
+                    type: string
+                    example:
+                  minimun_purchase:
+                    type: number
+                    example: 10
+                  start_store_operation:
+                    type: string
+                    example:
+                  end_store_operation:
+                    type: string
+                    example:
+                  days_store_operation:
+                    type: array
+                    items:
+                      type: string
+                      example: MONDAY
+                  show_address:
+                    type: boolean
+                    example: true
+                  show_email:
+                    type: boolean
+                    example: true
+                  is_closed:
+                    type: boolean
+                    example: false
+                  primary_color:
+                    type: string
+                    example: 'fffffff'
+                  secondary_color:
+                    type: string
+                    example: F7F7F7
+                  img_web?:
+                    type: string
+                    example: 'LINK para img'
+                  img_mobile?:
+                    type: string
+                    example: 'LINK para mobile img'
+                  url?:
+                    type: string
+                    example: 'www.urldaloja.com'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop/find/by/{store_id}:
+    get:
+      summary: find by store_id
+      description: 'rota para listar todos os items de protudos ( usar na pagina de adicionar produtos em destaque ).'
+      tags:
+        - SHOP
+      parameters:
+        - in: path
+          required: true
+          name: store_id
+          description: store_id para pesquisar
+          schema:
+            type: string
+            example: 'Id da Loja'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: '78f394e0-f99d-4b3e-ba68-5d8f99eda7dd'
+                  client_id:
+                    type: string
+                    example: 'bf58d4b8-aceb-4845-9cbf-4e391b37f643'
+                  name:
+                    type: string
+                    example: 'Ms.'
+                  email:
+                    type: string
+                    example: 'Chad18@hotmail.com'
+                  phone:
+                    type: string
+                    example: '710-750-0371'
+                  minimun_purchase:
+                    type: number
+                    example: 53.32
+                  start_store_operation:
+                    type: string
+                    example: '312'
+                  end_store_operation:
+                    type: string
+                    example: '312'
+                  days_store_operation:
+                    type: array
+                    items:
+                      type: string
+                    example: ['WEDNESDAY', 'MONDAY']
+                  show_address:
+                    type: boolean
+                    example: false
+                  show_email:
+                    type: boolean
+                    example: false
+                  is_closed:
+                    type: boolean
+                    example: false
+                  primary_color:
+                    type: string
+                    example: '#2222'
+                  secondary_color:
+                    type: string
+                    example: '#2222'
+                  img_web:
+                    type: string
+                    example: 'https://develop-qesh1.s3.amazonaws.com/ecommerce/sales/2018-12-04%2021-02-00.173.jpg/1662996097933'
+                  img_mobile:
+                    type: string
+                    example: 'https://develop-qesh1.s3.amazonaws.com/ecommerce/sales/CQRSES-4.png/1662996097951'
+                  url:
+                    type: string
+                    example: 'https://deborah.name'
+                  user_owner_id:
+                    type: string
+                    example: '0dacd3ae-2be4-4c57-b4c8-c84c4239f51a'
+                  created_at:
+                    type: string
+                    example: '2022-11-25T16:19:45.894Z'
+                  updated_at:
+                    type: string
+                    example: '2022-11-25T16:19:45.894Z'
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 'f82f47d5-c373-46fc-9414-9e9a6c5b6268'
+                        shopper_id:
+                          type: string
+                          example: null
+                        shop_id:
+                          type: string
+                          example: '78f394e0-f99d-4b3e-ba68-5d8f99eda7dd'
+                        street:
+                          type: string
+                          example: 'tested'
+                        number:
+                          type: string
+                          example: 'Banana'
+                        neighborhood:
+                          type: string
+                          example: 'tested'
+                        complementary_address:
+                          type: string
+                          example: 'tested'
+                        city:
+                          type: string
+                          example: 'tested'
+                        state:
+                          type: string
+                          example: 'tested'
+                        zip_code:
+                          type: string
+                          example: 'tested'
+                        address_owner:
+                          type: string
+                          example: 'SHOPPER ou SHOP'
+                        is_active:
+                          type: boolean
+                          example: false
+                        created_at:
+                          type: string
+                          example: '2022-11-25T16:19:45.894Z'
+                        updated_at:
+                          type: string
+                          example: '2022-11-25T16:19:45.894Z'
+
+  /v1/shopper:
+    post:
+      security: []
+      summary: criar um usuário Comprador
+      description: 'cria um comprador (SHOPPER) enviando o body'
+      tags:
+        - SHOPPER
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'name'
+                shop_id:
+                  type: string
+                  example: 'UUID'
+                email:
+                  type: string
+                  example: 'email@email.com'
+                document:
+                  type: string
+                  example: '09876543212'
+                phone:
+                  type: string
+                  example: '31987243446'
+                password:
+                  type: string
+                  example: 'Senha muito boa'
+                confirmPassword:
+                  type: string
+                  example: 'senha muito boa'
+      responses:
+        201:
+          description: retorna o objeto criado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'name'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  email:
+                    type: string
+                    example: 'email@email.com'
+                  document:
+                    type: string
+                    example: '09876543212'
+                  phone:
+                    type: string
+                    example: '31987243446'
+                  password:
+                    type: string
+                    example: 'Senha muito boa'
+                  pre_registration:
+                    type: string
+                    example: 'pre_registration_value'
+                  created_at:
+                    type: string
+                    example: 'timestamp'
+                  updated_at:
+                    type: string
+                    example: 'timestamp'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shopper/login-shopper/{shop_id}:
+    post:
+      security: []
+      summary: Logar um usuário comprador
+      description: no body enviar as informações de login
+      tags:
+        - SHOPPER
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            type: string
+            example: UUID da loja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'rafael.victor@qesh.ai'
+                password:
+                  type: string
+                  example: '@Eterno_6x1'
+      responses:
+        '200':
+          description: OK retorna um token de acesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 'TOKEN de acesso'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shopper/send-code-shopper:
+    post:
+      security: []
+      summary: enviar codigo ao comprador
+      description: através do email, enviar um codigo de verificação ao usuário comprador(shopper)
+      tags:
+        - SHOPPER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'emaildealguem@dominio.com'
+      responses:
+        '200':
+          description: OK retorna um token de acesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'menssagem de retorno'
+                  id:
+                    type: string
+                    example: 'UUID'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shopper/confirmation-code/send:
+    post:
+      security: []
+      summary: confirmar o codigo do comprador
+      description: confirma se o codigo inserido foi o mesmo recebido pelo email
+      tags:
+        - SHOPPER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  example: 'UUID user_id'
+                code:
+                  type: string
+                  example: 'Codigo de confirmação recebido pelo comprador'
+      responses:
+        '200':
+          description: recebe um Token de acesso temporario para poder efetuar as ações necessárias
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                    example: UUID
+                  confirmed:
+                    type: boolean
+                    example: true
+                  temporaryAccessToken:
+                    type: string
+                    example: TOKEN
+        '403':
+          description: Código inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-INVALIDCODE'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shopper/update-password:
+    patch:
+      security: []
+      summary: atualizar a senha do comprador
+      description: atualiza a senha de um comprador
+      tags:
+        - SHOPPER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassoword:
+                  type: string
+                  example: 'Nova Senha'
+                confirmPassword:
+                  type: string
+                  example: 'a mesma nova senha'
+      responses:
+        '201':
+          description: retorna o shopper atualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'name'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  email:
+                    type: string
+                    example: 'email@email.com'
+                  document:
+                    type: string
+                    example: '09876543212'
+                  phone:
+                    type: string
+                    example: '31987243446'
+                  password:
+                    type: string
+                    example: 'undefined'
+                  pre_registration:
+                    type: string
+                    example: 'pre_registration_value'
+                  created_at:
+                    type: string
+                    example: 'timestamp'
+                  updated_at:
+                    type: string
+                    example: 'timestamp'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+
+  /v1/shop_owner:
+    post:
+      security: []
+      summary: Criar um Lojista
+      description: Neste entpoint pode se criar um lojista
+      tags:
+        - SHOP OWNER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Nome do lojista'
+                document:
+                  type: string
+                  example: 'CPF ou CNPJ do Lojista'
+                email:
+                  type: string
+                  example: ' email@do.lojista'
+                password:
+                  type: string
+                  example: 'senha forte'
+                client_id:
+                  type: string
+                  example: 'UUID'
+      responses:
+        '200':
+          description: retorna um novo lojista
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'Nome do lojista'
+                  document:
+                    type: string
+                    example: 'CPF ou CNPJ do Lojista'
+                  email:
+                    type: string
+                    example: ' email@do.lojista'
+                  password:
+                    type: string
+                    example: 'senha forte'
+                  created_at:
+                    type: string
+                    example: 'timestamp'
+                  updated_at:
+                    type: string
+                    example: 'timestamp'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/send/code:
+    post:
+      security: []
+      summary: enviar código de confirmação
+      description: para enviar um código de confirmação, envie o email do lojista
+      tags:
+        - SHOP OWNER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'email@pra.enviar.o.codigo'
+      responses:
+        '200':
+          description: recebe uma mensagem e um id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  message:
+                    type: string
+                    example: 'menssagem sobre o envio'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/confirm/code/{user_id}:
+    post:
+      security: []
+      summary: confirmar se o codigo confere
+      description: confirmar se o codigo digitado pelo lojista confere com o enviado pela API
+      tags:
+        - SHOP OWNER
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+            example: 'UUID do lojista'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: 'codigo enviado ao lojista para corfirmar'
+      responses:
+        '200':
+          description: recebe uma mensagem e um id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  confirmed:
+                    type: boolean
+                    example: true
+                  temporaryAccessToken:
+                    type: string
+                    example: 'Token de acesso temporario'
+        '403':
+          description: 'Forbidden ou invalid code retornarão 403. Gentileza observar a menssagem'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/update/password:
+    put:
+      summary: atualizar a senha
+      description: para atualizar a senha do lojista, enviar a nova senha e a confirmação da nova senha'
+      tags:
+        - SHOP OWNER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  example: 'nova senha'
+                confirmPassword:
+                  type: string
+                  example: 'nova senha igual a nova senha'
+      responses:
+        '200':
+          description: retorna um novo lojista
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'Nome do lojista'
+                  document:
+                    type: string
+                    example: 'CPF ou CNPJ do Lojista'
+                  email:
+                    type: string
+                    example: ' email@do.lojista'
+                  password:
+                    type: string
+                    example: 'senha forte'
+                  created_at:
+                    type: string
+                    example: 'timestamp'
+                  updated_at:
+                    type: string
+                    example: 'timestamp'
+        '403':
+          description: 'Forbidden ou invalid code retornarão 403. Gentileza observar a menssagem'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/auth:
+    post:
+      security: []
+      summary: logar um lojista
+      description: para logar um lojista, enviar email e senha
+      tags:
+        - SHOP OWNER
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: 'email para verificar'
+                password:
+                  type: string
+                  example: 'senha para verificar'
+      responses:
+        '200':
+          description: retorna um novo lojista
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  token:
+                    type: string
+                    example: 'Token de acesso'
+        '403':
+          description: 'Forbidden ou invalid code retornarão 403. Gentileza observar a menssagem'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/change/email/{shop_id}:
+    patch:
+      tags:
+        - SHOP OWNER
+      summary: Mudar o email
+      description: 'para mudar o email mande o email novo no body junto com a senha atual do usuário'
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            type: string
+            example: 'UUID da loja'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                  example: 'novo@mail.com'
+                confirmEmail:
+                  type: string
+                  example: 'novo@mail.com'
+                password:
+                  type: string
+                  example: 'senha tensa'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id?:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'nome'
+                  document:
+                    type: string
+                    example: '09876543212'
+                  email:
+                    type: string
+                    example: 'email@email.com'
+                  password?:
+                    type: string
+                    example: 's3nh4f0r73'
+                  created_at?:
+                    type: string
+                    example: 'timestamp'
+                  updated_at?:
+                    type: string
+                    example: 'timestamp'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shop_owner/change/password:
+    patch:
+      tags:
+        - SHOP OWNER
+      summary: Mudar a senha
+      description: 'para mudar a senha mande a senha nova no body<br>Note que este método é para alterar a senha usando a senha antiga, que deve ser incluída junto do body'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  example: 'nova senha tensa'
+                confirmPassword:
+                  type: string
+                  example: 'nova senha tensa'
+                password:
+                  type: string
+                  example: 'velha senha não muito tensa'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id?:
+                    type: string
+                    example: 'UUID'
+                  name:
+                    type: string
+                    example: 'nome'
+                  document:
+                    type: string
+                    example: '09876543212'
+                  email:
+                    type: string
+                    example: 'email@email.com'
+                  password?:
+                    type: string
+                    example: 's3nh4f0r73'
+                  created_at?:
+                    type: string
+                    example: 'timestamp'
+                  updated_at?:
+                    type: string
+                    example: 'timestamp'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/manage-stock/getAllProducts/{shop_id}:
+    get:
+      tags:
+        - MANAGE STOCK
+      summary: 'listar todos os produtos no estoque'
+      description: "Opções para o 'orderBy'<ul><li>ACTIVE</li><li>INACTIVE</li><li>category</li><li>subcategory</li><li>name</li><li>created_at</li></ul>"
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            type: string
+            example: 'UUID da loja'
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: string
+            example: 'pagina para buscar'
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+            example: 'paginação da busca'
+        - in: query
+          name: orderBy
+          description: "Opções -> 'ACTIVE' 'INACTIVE' 'category' 'subcategory' 'name' 'created_at'"
+          required: false
+          schema:
+            enum: ['ACTIVE', 'INACTIVE', 'category', 'subcategory', 'name', 'created_at']
+            example: 'oscolher uma das opções'
+      responses:
+        '200':
+          description: 'response body'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  shop_id:
+                    type: string
+                  subcategory_id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  details:
+                    type: string
+                  status:
+                    type: array
+                    items:
+                      type: string
+                    example: ['WEDNESDAY', 'MONDAY']
+                  created_at:
+                    type: string
+                    example: timestamp
+                  updated_at:
+                    type: string
+                    example: timestamp
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/manage-stock/getAllProductsItems/{product_id}:
+    get:
+      summary: 'busca todos os product items'
+      tags:
+        - MANAGE STOCK
+      parameters:
+        - in: path
+          name: product_id
+          required: true
+          schema:
+            type: string
+            example: 'UUID do product'
+      responses:
+        '200':
+          description: 'response body'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  shop_id:
+                    type: string
+                  subcategory_id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  details:
+                    type: string
+                  status:
+                    type: array
+                    items:
+                      type: string
+                    example: ['WEDNESDAY', 'MONDAY']
+                  created_at:
+                    type: string
+                    example: timestamp
+                  updated_at:
+                    type: string
+                    example: timestamp
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    patch:
+      tags:
+        - MANAGE STOCK
+      summary: modifica a quantidade de produtos em estoque
+      parameters:
+        - in: path
+          name: product_id
+          required: true
+          schema:
+            type: string
+            example: 'UUID do product'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newStock:
+                  type: number
+      responses:
+        '200':
+          description: retorna um product item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example:
+                  products_id:
+                    type: string
+                    example: string
+                  name:
+                    type: string
+                    example: string
+                  sku:
+                    type: string
+                    example: string
+                  amount:
+                    type: number
+                    example: 2
+                  unit_type:
+                    type: object
+                    properties:
+                      UN:
+                        type: string
+                        example: 'UN'
+                      KG:
+                        type: string
+                        example: 'KG'
+                  minimum_item_measurement:
+                    type: number
+                    example: 1
+                  minimum_item_purchase:
+                    type: number
+                    example: 1
+                  cashback:
+                    type: string
+                    example: 'string'
+                  cashback_type:
+                    type: object
+                    properties:
+                      NO_CASHBACK:
+                        type: string
+                        example: 'NO_CASHBACK'
+                      PERCENTAGE:
+                        type: string
+                        example: 'PERCENTAGE'
+                  cashback_due_date:
+                    type: string
+                    example: 'timestamp'
+                  total_stock:
+                    type: number
+                    example: 30
+                  stock_minimum:
+                    type: number
+                    example: 0
+                  is_favorite:
+                    type: boolean
+                    example: false
+                  status:
+                    type: object
+                    properties:
+                      ACTIVE:
+                        type: string
+                        example: 'ACTIVE'
+                      INACTIVE:
+                        type: string
+                        example: 'INACTIVE'
+                  created_at:
+                    type: string
+                    example: 'timestamp'
+                  updated_at:
+                    type: string
+                    example: 'timestamp'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/categories:
+    post:
+      summary: 'Criar uma categoria'
+      tags:
+        - PRODUCT CATEGORY
+      description: 'Para criar uma categoria, deve-se enviar no body da requisição o nome da categoria e a id de uma loja'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: informática
+                shop_id:
+                  type: string
+                  example: UUID
+      responses:
+        '200':
+          description: criado retorna uma category
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/categories/{id}:
+    get:
+      summary: Obter lista de categorias de produtos
+      tags:
+        - PRODUCT CATEGORY
+      description: 'Para obter a lista de categorias existentes, deve-se passar pelo path e pela query as seguintes variaveis:<br> no path, deve-se passar o <strong>UUID</strong> da loja.<br>na query tem que passar de forma obrigatória as seguintes variaveis: <br><strong> page</strong> para escolher a paginação (número inteiro) cada página apresenta 8 itens, <br><strong>orderby</strong> para escolher de que forma vai ordenar. as opções de ordenação são: <ul><li>name</li><li>created_at</li></ul> <br>e opcionalmente poderá passar a variavel <strong>direction</strong> com as seguintes opções: <ul><li>asc</li><li>desc</li></ul>'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID da loja
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+            example: 0
+        - in: query
+          name: orderby
+          required: true
+          schema:
+            type: string
+            example: name or created_at
+        - in: query
+          name: direction
+          required: false
+          schema:
+            type: string
+            example: asc or desc
+      responses:
+        '200':
+          description: retornará um array de  <categorie>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    patch:
+      summary: Atualizar o nome de uma categoria
+      tags:
+        - PRODUCT CATEGORY
+      description: 'Para atualizar o nome de uma categoria, deve-se enviar no path, o id da categoria a ser atualizada e no body da requisição, o nome da categoria '
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: computadores
+      responses:
+        '200':
+          description: retornará um objeto de <categorie> com o nome atualizado
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: Deletar uma categoria
+      tags:
+        - PRODUCT CATEGORY
+      description: Para deletar uma categoria, deve-se enviar no path, o id da categoria a ser deletada
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      responses:
+        '200':
+          description: retornará um boolean
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/subcategories:
+    post:
+      summary: Criar uma subcategoria
+      tags:
+        - PRODUCT SUBCATEGORY
+      description: Para criar uma subcategoria, deve-se enviar no body da requisição o nome da subcategoria e a id de uma categoria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: HDD
+                category_id:
+                  type: string
+                  example: UUID
+      responses:
+        '200':
+          description: criado retorna uma sub_category
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/subcategories/{id}:
+    get:
+      summary: Obter lista de subcategorias de produtos
+      tags:
+        - PRODUCT SUBCATEGORY
+      description: 'Para obter a lista de subcategorias existentes, deve-se passar pelo path e pela query as seguintes variaveis:<br> no path, deve-se passar o <strong>UUID</strong> da categoria.<br>na query tem que passar de forma obrigatória as seguintes variaveis: <br><strong> page</strong> para escolher a paginação (número inteiro) cada página apresenta 8 itens, <br><strong>orderby</strong> para escolher de que forma vai ordenar. as opções de ordenação são: <ul><li>name</li><li>created_at</li></ul> <br>e opcionalmente poderá passar a variavel <strong>direction</strong> com as seguintes opções: <ul><li>asc</li><li>desc</li></ul>'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID da categoria raíz
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+            example: 0
+        - in: query
+          name: orderby
+          required: true
+          schema:
+            type: string
+            example: name or created_at
+        - in: query
+          name: direction
+          required: false
+          schema:
+            type: string
+            example: asc or desc
+      responses:
+        '200':
+          description: retornará um array de  <sub_categorie>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    patch:
+      summary: Atualizar o nome de uma subcategoria
+      tags:
+        - PRODUCT SUBCATEGORY
+      description: 'Para atualizar o nome de uma subcategoria, deve-se enviar no path, o id da subcategoria a ser atualizada e no body da requisição, o nome da subcategoria '
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: SSD
+      responses:
+        '200':
+          description: retornará um objeto de <categorie> com o nome atualizado
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: Deletar uma subcategoria
+      tags:
+        - PRODUCT SUBCATEGORY
+      description: Para deletar uma subcategoria, deve-se enviar no path, o id da subcategoria a ser deletada
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      responses:
+        '200':
+          description: retornará um boolean
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-variations/{shop_id}:
+    post:
+      summary: Criar uma variação de produto (product variation)
+      tags:
+        - PRODUCT VARIATION
+      description: Para criar uma variação de produto, deve-se enviar no body da requisição uma descrição da variação de produto e a id de uma loja
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            type: string
+            example: UUID da loja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: Descrição da variação
+      responses:
+        '200':
+          description: criado retorna uma product variation
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    get:
+      summary: Obter lista de variações de produto (product variation)
+      tags:
+        - PRODUCT VARIATION
+      description: Para obter a lista de variação de produto(product variation) deve-se passar pelo path, o id da loja (shop_id)
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            type: string
+            example: UUID da loja
+      responses:
+        '200':
+          description: retornará um array de  <sub_categorie>
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-variations/{id}:
+    patch:
+      summary: Atualizar o nome de uma variação de produto (product variation)
+      tags:
+        - PRODUCT VARIATION
+      description: Para atualizar a descrição de uma variação de produto, deve-se enviar no body, o id da variação a ser atualizada e a nova descrição
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID da loja
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: UUID
+                decription:
+                  type: string
+                  example: nova descrição
+      responses:
+        '200':
+          description: retornará um objeto de <categorie> com o nome atualizado
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: Deletar uma variação de produto (product variation)
+      tags:
+        - PRODUCT VARIATION
+      description: Para deletar uma variação de produto, deve-se enviar no path, o id da variação de produto a ser deletada.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      responses:
+        '200':
+          description: retornará um boolean
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-variations-options/{product_variation_id}:
+    post:
+      summary: Criar uma variação de produto (product variation)
+      tags:
+        - PRODUCT VARIATION OPTIONS
+      description: Para criar uma opão variação de produto, deve-se enviar no body da requisição uma descrição da variação de produto e a id de uma loja
+      parameters:
+        - in: path
+          name: product_variation_id
+          required: true
+          schema:
+            type: string
+            example: UUID da variação de produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: Descrição da opão de variação
+      responses:
+        '200':
+          description: criado retorna uma product variation option
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    get:
+      summary: Obter lista de opção de variações de produto (product variation option)
+      tags:
+        - PRODUCT VARIATION OPTIONS
+      description: Para obter a lista de opção de variação de produto(product variation option) deve-se passar pelo path, o id da loja (shop_id)
+      parameters:
+        - in: path
+          name: product_variation_id
+          required: true
+          schema:
+            type: string
+            example: UUID da variação de produto
+      responses:
+        '200':
+          description: retornará um array de product_variations_options
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-variations-options/{id}:
+    patch:
+      summary: Atualizar o nome de uma opão de variação de produto (product variation option)
+      tags:
+        - PRODUCT VARIATION OPTIONS
+      description: Para atualizar a descrição de uma opção de variação de produto, deve-se enviar no body, o id da variação de produto a ser atualizada e a nova descrição
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                decription:
+                  type: string
+                  example: nova descrição
+      responses:
+        '200':
+          description: retornará um objeto com o descrição atualizada
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: Deletar uma opção de variação de produto (product variation)
+      tags:
+        - PRODUCT VARIATION OPTIONS
+      description: Para deletar uma opção de variação de produto, deve-se enviar no path, o id da opção de variação de produto a ser deletada.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: UUID
+      responses:
+        '200':
+          description: retornará um boolean
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product:
+    post:
+      summary: Criar um produto
+      tags:
+        - PRODUCT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: 'd1e90c98-3d9d-4945-b60f-c4c98fd9a932'
+                subcategory_id:
+                  type: string
+                  example: '767f1aa6-4cd9-4e61-bb26-2987a87fcfee'
+                product_variation_option_id:
+                  type: string
+                  example: '237f1aa6-6d4d-35e2-b253-2987a87fcfwe'
+                name:
+                  type: string
+                  example: 'kaique'
+                description:
+                  type: string
+                  example: 'tested'
+                details:
+                  type: string
+                  example: 'tested'
+                status:
+                  type: string
+                  example: 'ACTIVE or INACTIVE'
+                product_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: 'kaique mendes'
+                      amount:
+                        type: number
+                        example: 123
+                      cashback_type:
+                        type: string
+                        example: 'PERCENTAGE'
+                      total_stock:
+                        type: number
+                        example: 3123
+                      status:
+                        type: string
+                        example: 'ACTIVE'
+                      unit_type:
+                        type: string
+                        example: 'UN'
+                      cashback_due_date:
+                        type: string
+                        example: '2022-10-24 19:14:18'
+                      minimum_item_measurement:
+                        type: number
+                        example: 10
+                      minimum_item_purchase:
+                        type: number
+                        example: 10
+                      images:
+                        type: object
+                        properties:
+                          main_image:
+                            type: string
+                            example: 'base64 string'
+                          image_1:
+                            type: string
+                            example: 'base64 string'
+                          image_2:
+                            type: string
+                            example: 'base64 string'
+                          image_3:
+                            type: string
+                            example: 'base64 string'
+                          image_4:
+                            type: string
+                            example: 'base64 string'
+      responses:
+        '200':
+          description: retornará um body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shop_id:
+                    type: string
+                    example: 'd1e90c98-3d9d-4945-b60f-c4c98fd9a932'
+                  subcategory_id:
+                    type: string
+                    example: '767f1aa6-4cd9-4e61-bb26-2987a87fcfee'
+                  name:
+                    type: string
+                    example: 'kaique'
+                  description:
+                    type: string
+                    example: 'tested'
+                  details:
+                    type: string
+                    example: 'tested'
+                  status:
+                    type: string
+                    example: 'ACTIVE'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product/{product_id}:
+    put:
+      summary: atualizar um produto
+      tags:
+        - PRODUCT
+      description: 'description'
+      parameters:
+        - in: path
+          name: product_id
+          example: 'Product_id UUID'
+          required: true
+          schema:
+            type: string
+            example: 'UUID da variação de produto'
+      requestBody:
+        description: 'troque os valores das seguintes propiedades para atualizar o produto'
+        required: true
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                subcategory_id:
+                  type: string
+                  example: '767f1aa6-4cd9-4e61-bb26-2987a87fcfee'
+                name:
+                  type: string
+                  example: 'kaique'
+                description:
+                  type: string
+                  example: 'tested'
+                details:
+                  type: string
+                  example: 'tested'
+                status:
+                  type: string
+                  example: 'ACTIVE'
+                product_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: '87422d83-c864-41e7-b83a-f3021474f2a1'
+                      name:
+                        type: string
+                        example: 'kaique mendes'
+                      amount:
+                        type: number
+                        example: 111111111
+                      cashback_type:
+                        type: string
+                        example: 'PERCENTAGE'
+                      total_stock:
+                        type: number
+                        example: 55
+                      status:
+                        type: string
+                        example: 'ACTIVE or INACTIVE'
+                      unit_type:
+                        type: string
+                        example: 'UN'
+                      cashback_due_date:
+                        type: string
+                        example: '2022-10-29 19:14:18'
+                      minimum_item_measurement:
+                        type: number
+                        example: 10
+                      imagesItem:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: '1f7f54d2-cf86-4631-abc4-d97494f7116b'
+                            image:
+                              type: string
+                              example: 'base64 string'
+      responses:
+        '200':
+          description: retornará um produto atualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shop_id:
+                    type: string
+                    example: 'd1e90c98-3d9d-4945-b60f-c4c98fd9a932'
+                  subcategory_id:
+                    type: string
+                    example: '767f1aa6-4cd9-4e61-bb26-2987a87fcfee'
+                  name:
+                    type: string
+                    example: 'kaique'
+                  description:
+                    type: string
+                    example: 'tested'
+                  details:
+                    type: string
+                    example: 'tested'
+                  status:
+                    type: string
+                    example: 'ACTIVE'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+
+  /v1/shipping-regions:
+    post:
+      summary: criar região de frete
+      description: para criar uma região de frete, enviar este body
+      tags:
+        - SHIPPING-REGION
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: 'UUID'
+                state:
+                  type: string
+                  example: 'MG'
+                city:
+                  type: string
+                  example: 'Belo Horizonte'
+                region:
+                  type: string
+                  example: 'nome da region'
+                price_per_region:
+                  type: number
+                  example: 5.23
+                days_shipping_deadline:
+                  type: number
+                  example: 4
+                hours_shipping_deadline:
+                  type: string
+                  example: 18
+      responses:
+        '200':
+          description: 'este endpo'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '409':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/409-Response-Conflito'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    get:
+      summary: Listar regioẽs de frete
+      description: recebe como retorno da requisição, uma lista de objetos contando regiões de frete disponíveis
+      tags:
+        - SHIPPING-REGION
+      responses:
+        200:
+          description: retorna um body com uma lista de regioes de frete
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 'UUID'
+                    shop_id:
+                      type: string
+                      example: 'UUID'
+                    state:
+                      type: string
+                      example: 'UUID'
+                    city:
+                      type: string
+                      example: 'UUID'
+                    region:
+                      type: string
+                      example: 'UUID'
+                    price_per_region:
+                      type: string
+                      example: 'UUID'
+                    days_shipping_deadline:
+                      type: string
+                      example: 'UUID'
+                    hours_shipping_deadlinei:
+                      type: string
+                      example: 'UUID'
+                    created_at:
+                      type: string
+                      example: 'UUID'
+                    updated_at:
+                      type: string
+                      example: 'UUID'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shipping-regions/search:
+    get:
+      tags:
+        - SHIPPING-REGION
+      summary: Listar regiões de frete com paginção
+      description: Retorna lista de objetos com opções de paginação na query
+      parameters:
+        - in: query
+          required: true
+          name: field
+          schema:
+            type: string
+          example: "escolher um > 'state', 'city', 'region', 'price'"
+        - in: query
+          required: true
+          name: values
+          schema:
+            type: string
+          example:
+        - in: query
+          required: true
+          name: price_per_region
+          schema:
+            type: string
+          example:
+        - in: query
+          required: true
+          name: page
+          schema:
+            type: string
+          example:
+
+      responses:
+        200:
+          description: retorna um body com uma lista de regioes de frete
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 'UUID'
+                    shop_id:
+                      type: string
+                      example: 'UUID'
+                    state:
+                      type: string
+                      example: 'UUID'
+                    city:
+                      type: string
+                      example: 'UUID'
+                    region:
+                      type: string
+                      example: 'UUID'
+                    price_per_region:
+                      type: string
+                      example: 'UUID'
+                    days_shipping_deadline:
+                      type: string
+                      example: 'UUID'
+                    hours_shipping_deadlinei:
+                      type: string
+                      example: 'UUID'
+                    created_at:
+                      type: string
+                      example: 'UUID'
+                    updated_at:
+                      type: string
+                      example: 'UUID'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/shipping-regions/{id}:
+    patch:
+      summary: Atualizar Região de frete
+      description: asd
+      tags:
+        - SHIPPING-REGION
+      parameters:
+        - in: path
+          required: true
+          name: id
+          example: 'UUID'
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: 'UUID'
+                state:
+                  type: string
+                  example: 'BA'
+                city:
+                  type: string
+                  example: Salvador
+                region:
+                  type: string
+                  example: 'nome da região'
+                price_per_region:
+                  type: number
+                  example: 'preço por região'
+                days_shipping_deadline:
+                  type: number
+                  example: 4
+                hours_shipping_deadline:
+                  type: string
+                  example: '18h'
+      responses:
+        200:
+          description: retorna um body com uma lista de regioes de frete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  state:
+                    type: string
+                    example: 'UUID'
+                  city:
+                    type: string
+                    example: 'UUID'
+                  region:
+                    type: string
+                    example: 'UUID'
+                  price_per_region:
+                    type: string
+                    example: 'UUID'
+                  days_shipping_deadline:
+                    type: string
+                    example: 'UUID'
+                  hours_shipping_deadlinei:
+                    type: string
+                    example: 'UUID'
+                  created_at:
+                    type: string
+                    example: 'UUID'
+                  updated_at:
+                    type: string
+                    example: 'UUID'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: Deletar Região de frete
+      description: Deleta uma regiao através do ID
+      tags:
+        - SHIPPING-REGION
+      parameters:
+        - in: path
+          required: true
+          name: id
+          example: 'UUID'
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Se deletado com sucesso:'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Deleted'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/403-Response-Forbidden'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/store-delivery/registerSenderAddress:
+    post:
+      summary: criar um Sender
+      description: cria um endereço de onde o objeto vai sair
+      tags:
+        - FRETE
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: 'UUID'
+                street:
+                  type: string
+                  example: 'Rua Chique'
+                number:
+                  type: string
+                  example: '346'
+                neighborhood:
+                  type: string
+                  example: 'Lourdes'
+                complementary_address?:
+                  type: string
+                  example: 'a'
+                city:
+                  type: string
+                  example: 'Belo Horizonte'
+                state:
+                  type: string
+                  example: 'Minas Gerais'
+                zip_code:
+                  type: string
+                  example: '31310234'
+                address_owner:
+                  type: string
+                  example: "'SHOPPER' ou 'SHOP'"
+                is_active:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Body com um Address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  shopper_id:
+                    type: string
+                    example: 'UUID'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  street:
+                    type: string
+                    example: string
+                  number:
+                    type: string
+                    example: string | null
+                  neighborhood:
+                    type: string
+                    example: string
+                  complementary_address:
+                    type: string
+                    example: string | null
+                  city:
+                    type: string
+                    example: string
+                  state:
+                    type: string
+                    example: string
+                  zip_code:
+                    type: string
+                    example: string
+                  address_owner:
+                    type: string
+                    example: 'SHOPPER ou SHOP'
+                  is_active:
+                    type: boolean
+                  created_at:
+                    type: string
+                    example: TimeStamp
+                  updated_at:
+                    type: string
+                    example: Timestamp
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/store-delivery/registerStoreSetupDelivery:
+    post:
+      tags:
+        - FRETE
+      summary: criar
+      description: asd
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: string
+                price_per_mileage:
+                  type: number
+                  example: 4
+                days_shipping_deadline:
+                  type: number
+                  example: 4
+                hour_shipping_deadline:
+                  type: string
+                  example: '18h'
+                shipping_type:
+                  type: string
+                  example: ShippingType
+                shop_sender_address_id:
+                  type: string
+                  example: string
+                is_active:
+                  type: boolean
+      responses:
+        200:
+          description: retorna uma politica de envio da loja
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  price_per_mileage:
+                    type: number
+                    example: 7
+                  days_shipping_deadline:
+                    type: number
+                    example: 4
+                  hour_shipping_deadline:
+                    type: string
+                    example: '18h'
+                  shipping_type:
+                    type: string
+                    example: 'MANUAL ou MILEAGE'
+                  shop_sender_address_id:
+                    type: string
+                    example: string
+                  is_active:
+                    type: boolean
+                  created_at:
+                    type: string
+                    example: timestamp
+                  updated_at:
+                    type: string
+                    example: timestamp
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/store-delivery/{id}:
+    get:
+      summary: Listar endereços por id de loja
+      description: asd
+      parameters:
+        - in: path
+          schema:
+            type: string
+          required: true
+          name: id
+      tags:
+        - FRETE
+      responses:
+        '200':
+          description: volta uma lista de Address
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 'UUID'
+                    shopper_id:
+                      type: string
+                      example: 'UUID'
+                    shop_id:
+                      type: string
+                      example: 'UUID'
+                    street:
+                      type: string
+                      example: string
+                    number:
+                      type: string
+                      example: string | null
+                    neighborhood:
+                      type: string
+                      example: string
+                    complementary_address:
+                      type: string
+                      example: string | null
+                    city:
+                      type: string
+                      example: string
+                    state:
+                      type: string
+                      example: string
+                    zip_code:
+                      type: string
+                      example: string
+                    address_owner:
+                      type: string
+                      example: 'SHOPPER ou SHOP'
+                    is_active:
+                      type: boolean
+                    created_at:
+                      type: string
+                      example: TimeStamp
+                    updated_at:
+                      type: string
+                      example: Timestamp
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: deletar endereço com um id
+      description: 'enviar o id no path para deletar'
+      parameters:
+        - in: path
+          schema:
+            type: string
+          required: true
+          name: id
+      tags:
+        - FRETE
+      responses:
+        '200':
+          description: volta uma lista de Address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'o que aconteceu'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    patch:
+      summary: atualizar endereço por id
+      description: mandar um body com o conteúdo para atualizar
+      parameters:
+        - in: path
+          schema:
+            type: string
+          required: true
+          name: id
+      tags:
+        - FRETE
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shop_id:
+                  type: string
+                  example: string
+                street:
+                  type: string
+                  example: string
+                number:
+                  type: string
+                  example: string
+                neighborhood:
+                  type: string
+                  example: string
+                complementary_address?:
+                  type: string
+                  example: string
+                city:
+                  type: string
+                  example: strings
+                state:
+                  type: string
+                  example: string
+                zip_code:
+                  type: string
+                  example: '31310123'
+                address_owner:
+                  type: string
+                  example: 'SHOPPER ou SHOP'
+                is_active:
+                  type: boolean
+      responses:
+        '200':
+          description: volta um Address atualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  shopper_id:
+                    type: string
+                    example: 'UUID'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  street:
+                    type: string
+                    example: string
+                  number:
+                    type: string
+                    example: string | null
+                  neighborhood:
+                    type: string
+                    example: string
+                  complementary_address:
+                    type: string
+                    example: string | null
+                  city:
+                    type: string
+                    example: string
+                  state:
+                    type: string
+                    example: string
+                  zip_code:
+                    type: string
+                    example: string
+                  address_owner:
+                    type: string
+                    example: 'SHOPPER ou SHOP'
+                  is_active:
+                    type: boolean
+                  created_at:
+                    type: string
+                    example: TimeStamp
+                  updated_at:
+                    type: string
+                    example: Timestamp
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-items/status/{id}:
+    patch:
+      summary: 'alterar o status do produto'
+      description: 'pode alterar o status de um produto para ATIVO ou INATIVO na propriedade > <strong>status</strong>'
+      tags:
+        - PRODUCT ITEMS
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            example: UUID do produto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: 'INACTIVE or ACTIVE'
+      responses:
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-items/add/favorite/{shop_id}/{product_item_id}:
+    patch:
+      summary: 'alterar o statatus de favorito do produto'
+      description: 'pode alterar o status de um produto para true ou false na propriedade > <strong>status</strong>'
+      tags:
+        - PRODUCT ITEMS
+      parameters:
+        - in: path
+          required: true
+          name: product_item_id
+          schema:
+            example: UUID do item de produto
+        - in: path
+          required: true
+          name: shop_id
+          schema:
+            example: UUID da loja
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: retorna um boolean
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        '400':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/400-Response-Bad-Request'
+
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/product-items/{id}:
+    get:
+      summary: 'buscar todos os product items'
+      description: 'buscar todos os product items  pelo id da loja (shop_id)'
+      tags:
+        - PRODUCT ITEMS
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            example: UUID do produto
+        - in: query
+          required: true
+          name: page
+          schema:
+            example: pagina a ser encontrada
+        - in: query
+          required: true
+          name: search
+          schema:
+            example: nome do produto a ser encontrado
+        - in: query
+          required: true
+          name: orderBy
+          schema:
+            example: "ordernar por: 'amount' | 'category' | 'name' | 'created_at'"
+      responses:
+        '200':
+          description: 'retorna uma lista de products'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: UUID
+                    shop_id:
+                      type: string
+                      example: UUID
+                    subcategory_id:
+                      type: string
+                      example: UUID
+                    name:
+                      type: string
+                      example: Object Name
+                    description:
+                      type: string
+                      example: Object description
+                    details:
+                      type: string
+                      example: Details
+                    status:
+                      type: string
+                      example: 'Active'
+                    created_at:
+                      type: string
+                      example: timestamp
+                    updated_at:
+                      type: string
+                      example: timestamp
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404-Not-Found'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+    delete:
+      summary: 'deletar um product items'
+      description: 'deletar um product items pelo id'
+      tags:
+        - PRODUCT ITEMS
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            example: UUID para deletar
+      responses:
+        '200':
+          description: 'retorna um boolean true para deletado e falase para não deletado'
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+  /v1/address:
+    post:
+      tags:
+        - ADDRESS
+      summary: criar um endereço
+      description: cria um novo endereço
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 'UUID'
+                shopper_id:
+                  type: string
+                  example: 'UUID'
+                shop_id:
+                  type: string
+                  example: 'UUID'
+                street:
+                  type: string
+                  example: string
+                number:
+                  type: string
+                  example: string | null
+                neighborhood:
+                  type: string
+                  example: string
+                complementary_address:
+                  type: string
+                  example: string | null
+                city:
+                  type: string
+                  example: string
+                state:
+                  type: string
+                  example: string
+                zip_code:
+                  type: string
+                  example: string
+                address_owner:
+                  type: string
+                  example: 'SHOPPER ou SHOP'
+                is_active:
+                  type: boolean
+                created_at:
+                  type: string
+                  example: TimeStamp
+                updated_at:
+                  type: string
+                  example: Timestamp
+
+      responses:
+        200:
+          description: retorna uma politica de envio da loja
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 'UUID'
+                  shopper_id:
+                    type: string
+                    example: 'UUID'
+                  shop_id:
+                    type: string
+                    example: 'UUID'
+                  street:
+                    type: string
+                    example: string
+                  number:
+                    type: string
+                    example: string | null
+                  neighborhood:
+                    type: string
+                    example: string
+                  complementary_address:
+                    type: string
+                    example: string | null
+                  city:
+                    type: string
+                    example: string
+                  state:
+                    type: string
+                    example: string
+                  zip_code:
+                    type: string
+                    example: string
+                  address_owner:
+                    type: string
+                    example: 'SHOPPER ou SHOP'
+                  is_active:
+                    type: boolean
+                  created_at:
+                    type: string
+                    example: TimeStamp
+                  updated_at:
+                    type: string
+                    example: Timestamp
+
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500-response-internal-server-error'
+
+tags:
+  - name: ADDRESS
+    description: Interface das rotas de Endereço
+  - name: AUTH
+    description: Interface de Autenticação
+  - name: SHOP
+    description: interface das Lojas
+  - name: SHOPPER
+    description: interface de comprador
+  - name: SHOP OWNER
+    description: interface de lojista
+  - name: MANAGE STOCK
+    description: Interface do controle de estoque
+  - name: PRODUCT
+    description: Interface de rotas de Produtos
+  - name: PRODUCT ITEMS
+    description: Interface de rotas de Produtos
+  - name: PRODUCT CATEGORY
+    description: Interface das Categories
+  - name: PRODUCT SUBCATEGORY
+    description: Interface das Subcategories
+  - name: PRODUCT VARIATION
+    description: Interface das Variações de Produto
+  - name: PRODUCT VARIATION OPTIONS
+    description: Interface das Opções de Variações de Produto
+  - name: SHIPPING-REGION
+    description: Interface de Frete
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    400-Response-Bad-Request:
+      type: object
+      properties:
+        status:
+          type: number
+          example: error
+        message:
+          type: string
+          example: reason of bad request
+    403-Response-Forbidden:
+      type: object
+      properties:
+        status:
+          type: string
+          example: true
+        messages:
+          type: array
+          items:
+            type: string
+            example: 'error: Email or password invalid!'
+        code:
+          type: string
+          example: error.resourcename.forbidden-resource
+    403-Response-INVALIDCODE:
+      type: object
+      properties:
+        status:
+          type: string
+          example: true
+        messages:
+          type: array
+          items:
+            type: string
+            example: 'error.code.sent.invalid'
+        code:
+          type: string
+          example: error.resourcename.forbidden-resource
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    401-Unauthorized:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Reason of prohibition
+    404-Not-Found:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            status:
+              type: string
+              example: 'true'
+            message:
+              type: string
+              example: 'error: resource does not exist!'
+            code:
+              type: string
+              example: 'general.not-found-error'
+    409-Response-Conflito:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        messages:
+          type: array
+          items:
+            type: string
+            example: '[error: Document or Email already register!]'
+        code:
+          type: string
+          example: general.not-found-error
+    422-Response-Unprocessable_entity:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        messages:
+          type: array
+          items:
+            type: string
+            example: '[error: Invalid image size, maximum supported: 65335KB]'
+        code:
+          type: string
+          example: 'image.size.invalid'
+    500-response-internal-server-error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: 'true'
+        messages:
+          type: array
+          items:
+            type: string
+            example: 'error: internal error, contact an administrator'
+        code:
+          type: string
+          example: error.internal.server.error
+    auth_request_body:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'algum@email.com.br'
+        password:
+          type: string
+          example: 'algumaSenha'
+# /v1/users:
+#     post:
+#       summary: criar um usuário
+#       description: Manda o Body com as informações para criar um Usuário
+#       tags:
+#         - USERS
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 name:
+#                   type: string
+#                   example: "nome"
+#                 document:
+#                   type: string
+#                   example: "09876543212"
+#                 email:
+#                   type: string
+#                   example: "email@email.com"
+#                 password:
+#                   type: string
+#                   example: "s3nh4f0r73"
+#                 client_id:
+#                   type: string
+#                   example: "UUID"
+#       responses:
+#         '201':
+#           description: OK
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   id?:
+#                     type: string
+#                     example: "UUID"
+#                   name:
+#                     type: string
+#                     example: "nome"
+#                   document:
+#                     type: string
+#                     example: "09876543212"
+#                   email:
+#                     type: string
+#                     example: "email@email.com"
+#                   password?:
+#                     type: string
+#                     example: "s3nh4f0r73"
+#                   created_at?:
+#                     type: string
+#                     example: 'timestamp'
+#                   updated_at?:
+#                     type: string
+#                     example: 'timestamp'
+#         '409':
+#           description: Forbidden
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/409-Response-Conflito'
+#         '500':
+#           description: Internal Server Error
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/500-response-internal-server-error'
+#   /v1/users/auth:
+#     post:
+#       summary: logar um usuario
+#       tags:
+#         - USERS
+#       description: "Neste end point você pode enviar um condigo de confirmação para o email do usuario"
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 email:
+#                   type: string
+#                   example: jodossan@gmail.com
+#                 password:
+#                   type: string
+#                   example: "s3nH4F0r73"
+#       responses:
+#         "200":
+#           description: No retorno você recebe um Token e um shop_id
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   token:
+#                     type: string
+#                     example: "TOKEN"
+#                   shop_id:
+#                     type: string
+#                     example: "UUID"
+#         '403':
+#           description: Forbidden
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/403-Response-Forbidden'
+#   /v1/users/send/code:
+#     post:
+#       security: []
+#       summary: Enviar codigo de confirmação para o Usuário
+#       tags:
+#         - USERS
+#       description: Neste end point você pode enviar um condigo de confirmação para o email do usuario
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 email:
+#                   type: string
+#                   example: jodossan@gmail.com
+#       responses:
+#         '200':
+#           description: OK
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   message:
+#                     type: string
+#                     example: code sent to the responsible person's email
+#                   id:
+#                     type: string
+#                     example: UUID code
+#         '404':
+#           description: Not Found
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/404-Not-Found'
+#         '500':
+#           description: Internal Server Error
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/500-response-internal-server-error'
+#   /v1/users/confirm/code/{user_id}:
+#     post:
+#       security: []
+#       summary: Confirmar o codigo
+#       tags:
+#         - USERS
+#       description: rota para confirmar o codigo enviado
+#       parameters:
+#         - in: path
+#           required: true
+#           name: user_id
+#           schema:
+#             type: string
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 code:
+#                   type: string
+#                   example: Code Sent for user
+#       responses:
+#         '200':
+#           description: OK
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   confirmed:
+#                     type: boolean
+#                   shop_id:
+#                     type: string
+#                     example: Shop UUID
+#                   temporaryAccessToken:
+#                     type: object
+#                     example: TOKEN DE ACESSO
+#         '403':
+#           description: Forbidden
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/403-Response-Forbidden'
+#         '500':
+#           description: Internal Server Error
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/500-response-internal-server-error'
+#   /v1/users/update/password/{user_id}:
+#     post:
+#       summary: Trocar a senha
+#       tags:
+#         - USERS
+#       description: rota para trocar a senha do usuario
+#       parameters:
+#         - in: path
+#           required: true
+#           name: user_id
+#           schema:
+#             type: string
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 newPassword:
+#                   type: string
+#                   example: Strong Password
+#                 confirmPassword:
+#                   type: string
+#                   example: Same Strong Password
+#       responses:
+#         '200':
+#           description: OK
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   confirmed:
+#                     type: boolean
+#                   shop_id:
+#                     type: string
+#                     example: Shop UUID
+#                   temporaryAccessToken:
+#                     type: object
+#                     example: '---TOKEN---'
+#         '403':
+#           description: Forbidden
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/403-Response-Forbidden'
+#         '500':
+#           description: Internal Server Error
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/500-response-internal-server-error'
