@@ -27,8 +27,6 @@ export class CreateUserService implements ICreateUserService {
     try {
       return this.userRepository.create(data);
     } catch (error) {
-      console.log(error);
-
       throw this._error(this._prismaError, UserErrorsCodes.INTERNAL, 500);
     }
   }
