@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { users } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { ICreateUserRepository, IUserRepository } from '../structure/IRepository.structure';
+import {
+  ICreateUserRepository,
+  IUpdateUserRepository,
+  IUserRepository,
+} from '../structure/IRepository.structure';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -20,5 +24,16 @@ export class UserRepository implements IUserRepository {
 
   async create(data: ICreateUserRepository): Promise<users> {
     return this.prisma.users.create({ data });
+  }
+
+  async update(data: IUpdateUserRepository): Promise<users> {
+    return this.prisma.users.update({
+      where: {
+        id: data.user.user_id,
+      },
+      data: {
+        ...data.body,
+      },
+    });
   }
 }
