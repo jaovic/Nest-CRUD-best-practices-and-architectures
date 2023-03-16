@@ -7,6 +7,7 @@ import { GenericErrorFilter } from './utils/filters/generic-error.filter';
 import { ValidationErrorFilter } from './utils/filters/validation-error.filter';
 import { NotFoundErrorFilter } from './utils/filters/not-found-error.filter';
 import { CustomErrorFilter } from './utils/filters/custom-error.filter';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const PORT = process.env.PORT;
@@ -15,6 +16,14 @@ async function bootstrap() {
 
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.use('/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, SwaggerCss));
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   app.useGlobalFilters(new GenericErrorFilter(httpAdapterHost));
   app.useGlobalFilters(new ValidationErrorFilter(httpAdapterHost));
