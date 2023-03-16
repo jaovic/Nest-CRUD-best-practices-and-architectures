@@ -5,7 +5,7 @@ const MessagesHelper = {
   USER_ID_UUID: 'user id must be uuid',
 };
 
-export class FindUserParam {
+export class DeleteUserParam {
   @IsNotEmpty({ message: MessagesHelper.USER_ID_REQUIRED })
   @IsUUID(undefined, { message: MessagesHelper.USER_ID_UUID })
   user_id: string;
