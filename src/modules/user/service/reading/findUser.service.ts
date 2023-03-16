@@ -20,7 +20,7 @@ export class FindUserService implements IFindUserService {
   async execute(data: IFindUser): Promise<users> {
     const user = await this.userRepository.exists({ id: data.user_id });
 
-    if (user) throw this._error(this._userNotExist, UserErrorsCodes.NOT_FOUND, 404);
+    if (!user) throw this._error(this._userNotExist, UserErrorsCodes.NOT_FOUND, 404);
 
     try {
       return this.userRepository.findById(data.user_id);
