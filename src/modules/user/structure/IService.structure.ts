@@ -15,6 +15,10 @@ export interface IUpdateUser {
   body: Partial<users>;
 }
 
+export interface IDeleteUser {
+  user_id: string;
+}
+
 export interface ICreateUserService {
   execute(data: ICreateUser): Promise<users>;
 }
@@ -25,4 +29,7 @@ export interface IFindUserService {
 
 export interface IUpdateUserService {
   execute(data: IUpdateUser): Promise<users>;
+}
+export interface IDeleteUserService {
+  execute(data: IDeleteUser): Promise<boolean>;
 }

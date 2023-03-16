@@ -1,12 +1,15 @@
-import { Body, Controller, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
-import { findUserParam } from './dto/findUser.dto';
+import { DeleteUserParam } from './dto/deleteUser.dto';
+import { FindUserParam } from './dto/findUser.dto';
 import { UpdateUserDto, UpdateUserParam } from './dto/updateUser.dto';
 import { FindUserService } from './service/reading/findUser.service';
 import { CreateUserService } from './service/writing/createUser.service';
+import { DeleteUserService } from './service/writing/deleteUser.service';
 import { UpdateUserService } from './service/writing/updateUser.service';
 import {
   ICreateUserService,
+  IDeleteUserService,
   IFindUserService,
   IUpdateUser,
   IUpdateUserService,
@@ -21,6 +24,8 @@ export class UserController {
     private readonly findUserService: IFindUserService,
     @Inject(UpdateUserService)
     private readonly updateUserService: IUpdateUserService,
+    @Inject(DeleteUserService)
+    private readonly deleteUserService: IDeleteUserService,
   ) {}
 
   @Post('/create')
@@ -29,7 +34,7 @@ export class UserController {
   }
 
   @Get('/find-user/:user_id')
-  async findUser(@Param() param: findUserParam) {
+  async findUser(@Param() param: FindUserParam) {
     return this.findUserService.execute({ user_id: param.user_id });
   }
 
@@ -37,5 +42,10 @@ export class UserController {
   async updateUser(@Param() param: UpdateUserParam, @Body() data: UpdateUserDto) {
     const body: IUpdateUser = { body: data, user: { user_id: param.user_id } };
     return this.updateUserService.execute(body);
+  }
+
+  @Delete('/delete-user/:user_id')
+  async DeleteUserService(@Param() param: DeleteUserParam) {
+    return this.deleteUserService.execute({ user_id: param.user_id });
   }
 }

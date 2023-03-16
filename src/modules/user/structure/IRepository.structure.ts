@@ -16,4 +16,5 @@ export interface IUserRepository {
   create(data: ICreateUserRepository): Promise<users>;
   findById(id: string): Promise<users>;
   update(data: IUpdateUserRepository): Promise<users>;
+  delete(id: string): Promise<boolean>;
 }
