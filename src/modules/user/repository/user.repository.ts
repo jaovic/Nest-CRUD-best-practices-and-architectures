@@ -14,6 +14,10 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async findById(id: string): Promise<users> {
+    return this.prisma.users.findFirst({ where: { id } });
+  }
+
   async create(data: ICreateUserRepository): Promise<users> {
     return this.prisma.users.create({ data });
   }
