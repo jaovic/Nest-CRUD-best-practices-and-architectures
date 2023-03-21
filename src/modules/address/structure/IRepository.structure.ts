@@ -12,6 +12,21 @@ export interface ICreateAddressRepository {
   is_active: boolean;
 }
 
+export interface IUpdateAddressRepository {
+  address: { address_id: string };
+  body: Partial<address>;
+}
+
+export interface IChangeStatusAddressRepository {
+  address_id: string;
+  is_active: boolean;
+}
+
 export interface IAddressRepository {
+  exists(where: Partial<address>, select?: object): Promise<address | Partial<address>>;
   create(data: ICreateAddressRepository): Promise<address>;
+  findAddress(id: string): Promise<address>;
+  finUserActiveAddress(id: string): Promise<address>;
+  updateAddress(data: IUpdateAddressRepository): Promise<address>;
+  changeStatusAddress(data: IChangeStatusAddressRepository): Promise<address>;
 }
