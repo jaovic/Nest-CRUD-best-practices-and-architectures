@@ -33,18 +33,18 @@ export class UserController {
     return this.createUserService.execute(data);
   }
 
-  @Get('/find-user/:user_id')
+  @Get('/find/:user_id')
   async findUser(@Param() param: FindUserParam) {
     return this.findUserService.execute({ user_id: param.user_id });
   }
 
-  @Put('/update-user/:user_id')
+  @Put('/update/:user_id')
   async updateUser(@Param() param: UpdateUserParam, @Body() data: UpdateUserDto) {
     const body: IUpdateUser = { body: data, user: { user_id: param.user_id } };
     return this.updateUserService.execute(body);
   }
 
-  @Delete('/delete-user/:user_id')
+  @Delete('/delete/:user_id')
   async DeleteUserService(@Param() param: DeleteUserParam) {
     return this.deleteUserService.execute({ user_id: param.user_id });
   }
