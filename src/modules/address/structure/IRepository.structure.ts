@@ -29,4 +29,5 @@ export interface IAddressRepository {
   finUserActiveAddress(id: string): Promise<address>;
   updateAddress(data: IUpdateAddressRepository): Promise<address>;
   changeStatusAddress(data: IChangeStatusAddressRepository): Promise<address>;
+  deleteAddress(id: string): Promise<boolean>;
 }
