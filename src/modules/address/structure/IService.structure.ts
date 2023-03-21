@@ -49,3 +49,7 @@ export interface IUpdateAddressService {
 export interface IChangeStatusAddressService {
   execute(data: IChangeStatusAddress): Promise<address>;
 }
+
+export interface IDeleteAddressService {
+  execute(id: string): Promise<boolean>;
+}

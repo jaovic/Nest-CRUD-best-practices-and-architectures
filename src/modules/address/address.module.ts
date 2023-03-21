@@ -7,6 +7,7 @@ import { FindAddressService } from './service/reading/findAddress.service';
 import { FinUSerActivedAddressService } from './service/reading/findUserActiveAddress.service';
 import { ChangeStatusAddressService } from './service/writing/changeStatusAddress.service';
 import { CreateAddressService } from './service/writing/createAddress.service';
+import { DeleteAddressService } from './service/writing/deleteAddress.service';
 import { UpdateAddressService } from './service/writing/updateAddress.service';
 
 @Module({
@@ -21,6 +22,7 @@ import { UpdateAddressService } from './service/writing/updateAddress.service';
     FinUSerActivedAddressService,
     UpdateAddressService,
     ChangeStatusAddressService,
+    DeleteAddressService,
   ],
 })
 export class AddressModule {}

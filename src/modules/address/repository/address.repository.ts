@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { address } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { DeleteAddressService } from '../service/writing/deleteAddress.service';
 import {
   IAddressRepository,
   IChangeStatusAddressRepository,
@@ -56,6 +57,11 @@ export class AddressRepository implements IAddressRepository {
         is_active: data.is_active,
       },
     });
+  }
+
+  async deleteAddress(id: string): Promise<boolean> {
+    await this.prisma.address.delete({ where: { id } });
+    return true;
   }
 
   async create(data: ICreateAddressRepository): Promise<address> {

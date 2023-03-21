@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import { ChangeStatusAddressDto, ChangeStatusAddressParam } from './dto/changeStatusAddress.dto';
 import { CreateAddressDto, CreateAddressParam } from './dto/createAddress.dto';
+import { DeleteAddressParam } from './dto/deleteAddress.dto';
 import { FindAddressParam } from './dto/findAddress.dto';
 import { FindUserActiveAddressParam } from './dto/findUserActiveAddress.dto';
 import { UpdateAddressDto, UpdateAddressParam } from './dto/updateAddress.dto';
@@ -8,10 +9,12 @@ import { FindAddressService } from './service/reading/findAddress.service';
 import { FinUSerActivedAddressService } from './service/reading/findUserActiveAddress.service';
 import { ChangeStatusAddressService } from './service/writing/changeStatusAddress.service';
 import { CreateAddressService } from './service/writing/createAddress.service';
+import { DeleteAddressService } from './service/writing/deleteAddress.service';
 import { UpdateAddressService } from './service/writing/updateAddress.service';
 import {
   IChangeStatusAddressService,
   ICreateAddressService,
+  IDeleteAddressService,
   IFindAddressService,
   IFindUserActiveAddressService,
   IUpdateAddress,
@@ -31,6 +34,8 @@ export class AddressController {
     private readonly updateAddressService: IUpdateAddressService,
     @Inject(ChangeStatusAddressService)
     private readonly ChangeStatusAddressService: IChangeStatusAddressService,
+    @Inject(DeleteAddressService)
+    private readonly deleteAddressService: IDeleteAddressService,
   ) {}
 
   @Post('/create/:user_id')
@@ -47,6 +52,11 @@ export class AddressController {
   @Put('/change/status/:address_id')
   async changeStatusAddress(@Param() param: ChangeStatusAddressParam, @Body() data: ChangeStatusAddressDto) {
     return this.ChangeStatusAddressService.execute({ address_id: param.address_id, is_active: data.is_active });
+  }
+
+  @Delete('/delete/:address_id')
+  async deleteAddress(@Param() param: DeleteAddressParam) {
+    return this.deleteAddressService.execute(param.address_id);
   }
 
   @Get('/find/:address_id')
