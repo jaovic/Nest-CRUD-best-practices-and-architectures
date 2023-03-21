@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { users } from '@prisma/client';
-import { getClassError } from 'src/utils/errors/custom.error';
+import { getClassError } from '../../../../utils/errors/custom.error';
 import { UserRepository } from '../../repository/user.repository';
 import { UserErrorsCodes } from '../../structure/erros.codes.structure';
 import { IUserRepository } from '../../structure/IRepository.structure';

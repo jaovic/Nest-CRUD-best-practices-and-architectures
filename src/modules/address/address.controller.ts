@@ -49,7 +49,7 @@ export class AddressController {
     return this.updateAddressService.execute(body);
   }
 
-  @Put('/change/status/:address_id')
+  @Put('/change-status/:address_id')
   async changeStatusAddress(@Param() param: ChangeStatusAddressParam, @Body() data: ChangeStatusAddressDto) {
     return this.ChangeStatusAddressService.execute({ address_id: param.address_id, is_active: data.is_active });
   }
