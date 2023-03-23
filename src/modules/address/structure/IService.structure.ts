@@ -30,6 +30,10 @@ export interface IChangeStatusAddress {
   is_active: boolean;
 }
 
+export interface IDeleteAddress {
+  id: string;
+}
+
 export interface ICreateAddressService {
   execute(data: ICreateAddress): Promise<address>;
 }
@@ -51,5 +55,5 @@ export interface IChangeStatusAddressService {
 }
 
 export interface IDeleteAddressService {
-  execute(id: string): Promise<boolean>;
+  execute(data: IDeleteAddress): Promise<boolean>;
 }
