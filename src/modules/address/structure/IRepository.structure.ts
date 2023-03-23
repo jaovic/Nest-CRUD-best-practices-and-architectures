@@ -26,7 +26,7 @@ export interface IAddressRepository {
   exists(where: Partial<address>, select?: object): Promise<address | Partial<address> | null>;
   create(data: ICreateAddressRepository): Promise<address>;
   findAddress(id: string): Promise<address>;
-  finUserActiveAddress(id: string): Promise<address>;
+  findUserActiveAddress(id: string): Promise<address>;
   updateAddress(data: IUpdateAddressRepository): Promise<address>;
   changeStatusAddress(data: IChangeStatusAddressRepository): Promise<address>;
   deleteAddress(id: string): Promise<boolean>;
