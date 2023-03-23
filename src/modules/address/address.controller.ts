@@ -6,7 +6,7 @@ import { FindAddressParam } from './dto/findAddress.dto';
 import { FindUserActiveAddressParam } from './dto/findUserActiveAddress.dto';
 import { UpdateAddressDto, UpdateAddressParam } from './dto/updateAddress.dto';
 import { FindAddressService } from './service/reading/findAddress.service';
-import { FinUSerActivedAddressService } from './service/reading/findUserActiveAddress.service';
+import { FindUserActiveAddressService } from './service/reading/findUserActiveAddress.service';
 import { ChangeStatusAddressService } from './service/writing/changeStatusAddress.service';
 import { CreateAddressService } from './service/writing/createAddress.service';
 import { DeleteAddressService } from './service/writing/deleteAddress.service';
@@ -28,8 +28,8 @@ export class AddressController {
     private readonly createAddressService: ICreateAddressService,
     @Inject(FindAddressService)
     private readonly findAddressService: IFindAddressService,
-    @Inject(FinUSerActivedAddressService)
-    private readonly finUSerActivedAddressService: IFindUserActiveAddressService,
+    @Inject(FindUserActiveAddressService)
+    private readonly findUserActiveAddressService: IFindUserActiveAddressService,
     @Inject(UpdateAddressService)
     private readonly updateAddressService: IUpdateAddressService,
     @Inject(ChangeStatusAddressService)
@@ -56,7 +56,7 @@ export class AddressController {
 
   @Delete('/delete/:address_id')
   async deleteAddress(@Param() param: DeleteAddressParam) {
-    return this.deleteAddressService.execute(param.address_id);
+    return this.deleteAddressService.execute({ id: param.address_id });
   }
 
   @Get('/find/:address_id')
@@ -66,6 +66,6 @@ export class AddressController {
 
   @Get('/find/active/:user_id')
   async findUserActiveAddress(@Param() param: FindUserActiveAddressParam) {
-    return this.finUSerActivedAddressService.execute({ user_id: param.user_id });
+    return this.findUserActiveAddressService.execute({ user_id: param.user_id });
   }
 }
