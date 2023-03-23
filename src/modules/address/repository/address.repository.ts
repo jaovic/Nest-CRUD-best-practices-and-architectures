@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { address } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
-import { DeleteAddressService } from '../service/writing/deleteAddress.service';
+import { PrismaService } from '../../../prisma.service';
 import {
   IAddressRepository,
   IChangeStatusAddressRepository,
   ICreateAddressRepository,
   IUpdateAddressRepository,
 } from '../structure/IRepository.structure';
-import { IChangeStatusAddress } from '../structure/IService.structure';
 
 @Injectable()
 export class AddressRepository implements IAddressRepository {
@@ -28,7 +26,7 @@ export class AddressRepository implements IAddressRepository {
     return this.prisma.address.findFirst({ where: { id } });
   }
 
-  async finUserActiveAddress(id: string): Promise<address> {
+  async findUserActiveAddress(id: string): Promise<address> {
     return this.prisma.address.findFirst({
       where: {
         user_id: id,
