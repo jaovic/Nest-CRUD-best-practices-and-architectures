@@ -11,7 +11,7 @@ export interface IFindUser {
 }
 
 export interface IUpdateUser {
-  user: { user_id };
+  user: { user_id: string };
   body: Partial<users>;
 }
 

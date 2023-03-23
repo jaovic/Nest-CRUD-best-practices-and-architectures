@@ -64,7 +64,7 @@ describe('findUserService', () => {
       } catch (error) {
         expect(error).toHaveProperty('message');
         expect(error).toHaveProperty('httpStatusCode');
-        expect(error.httpStatusCode).toEqual(404);
+        expect(error.httpStatusCode).toEqual(500);
         expect(error.message).toEqual('error: database persistence error, contact admin!');
       }
     });
