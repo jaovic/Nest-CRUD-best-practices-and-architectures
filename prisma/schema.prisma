@@ -20,7 +20,7 @@ model users {
 model address {
   id                    String     @id @default(uuid())
   user_id               String    @db.VarChar(255)
-  users                  users     @relation(fields: [user_id], references: [id])
+  users                  users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   street                String     @db.VarChar(255)
   number                String?    @db.VarChar(255)
   neighborhood          String     @db.VarChar(255)

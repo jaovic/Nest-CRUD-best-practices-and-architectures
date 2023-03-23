@@ -17,7 +17,7 @@ export class AddressRepository implements IAddressRepository {
     throw new Error('Method not implemented.');
   }
 
-  async exists(where: Partial<address>, select?: object): Promise<address | Partial<address>> {
+  async exists(where: Partial<address>, select?: object): Promise<address | Partial<address> | null> {
     return this.prisma.address.findFirst({
       where,
       select,

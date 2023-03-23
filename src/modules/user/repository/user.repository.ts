@@ -11,7 +11,7 @@ import {
 export class UserRepository implements IUserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async exists(where: Partial<users>, select?: object): Promise<users | Partial<users>> {
+  async exists(where: Partial<users>, select?: object): Promise<users | Partial<users> | null> {
     return this.prisma.users.findFirst({
       where,
       select,
