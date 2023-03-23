@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { address } from '@prisma/client';
-import { getClassError } from 'src/utils/errors/custom.error';
+import { getClassError } from '../../../../utils/errors/custom.error';
 import { AddressRepository } from '../../repository/address.repository';
 import { AddressErrorsCodes } from '../../structure/erros.codes.structure';
 import { IAddressRepository } from '../../structure/IRepository.structure';
