@@ -12,7 +12,7 @@ export interface IUpdateUserRepository {
 }
 
 export interface IUserRepository {
-  exists(where: Partial<users> | any, select?: object): Promise<users | null | Partial<users>>;
+  exists(where: Partial<users> | any, select?: object): Promise<users | null | Partial<users> | null>;
   create(data: ICreateUserRepository): Promise<users>;
   findById(id: string): Promise<users>;
   update(data: IUpdateUserRepository): Promise<users>;

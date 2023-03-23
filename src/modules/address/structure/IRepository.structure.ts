@@ -23,7 +23,7 @@ export interface IChangeStatusAddressRepository {
 }
 
 export interface IAddressRepository {
-  exists(where: Partial<address>, select?: object): Promise<address | Partial<address>>;
+  exists(where: Partial<address>, select?: object): Promise<address | Partial<address> | null>;
   create(data: ICreateAddressRepository): Promise<address>;
   findAddress(id: string): Promise<address>;
   finUserActiveAddress(id: string): Promise<address>;
