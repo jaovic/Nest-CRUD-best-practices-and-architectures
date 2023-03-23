@@ -11,9 +11,6 @@ import {
 @Injectable()
 export class AddressRepository implements IAddressRepository {
   constructor(private prisma: PrismaService) {}
-  finUserActivedAddress(id: string): Promise<address> {
-    throw new Error('Method not implemented.');
-  }
 
   async exists(where: Partial<address>, select?: object): Promise<address | Partial<address> | null> {
     return this.prisma.address.findFirst({
